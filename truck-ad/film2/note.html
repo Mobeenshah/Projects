@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Still Lettering</title>
+<style>
+@font-face{font-family:Nastaliq;src:url(../poster/fonts/nastaliq-400.woff2)}
+@font-face{font-family:NastaliqB;src:url(../poster/fonts/nastaliq-700.woff2)}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:transparent;overflow:hidden}
+#note{width:1200px;height:600px;direction:rtl;font-family:Nastaliq;color:#1c2333;padding:10px 30px}
+#note .h{font-size:64px;line-height:1.9;border-bottom:3px solid #1c2333;display:inline-block;margin-right:220px;margin-bottom:6px}
+#note p{font-size:56px;line-height:1.62}
+#note .sig{font-size:56px;margin-right:520px;margin-top:6px}
+#tail{width:400px;height:300px;direction:rtl;font-family:NastaliqB;color:#f2d23a;text-align:center;line-height:1.55}
+#tail .a{font-size:92px}#tail .b{font-size:80px;margin-top:-14px}
+</style></head><body>
+<div id="c"></div>
+<script>
+const T = {
+  note: `<div id="note"><div class="h">امی جان،</div>
+    <p>یہاں سردی بہت ہے، مگر میں ٹھیک ہوں۔</p>
+    <p>آپ کا بھیجا ٹرک میز پر رکھا ہے،</p>
+    <p>لگتا ہے گھر پاس ہی ہے۔</p>
+    <div class="sig">آپ کا بیٹا</div></div>`,
+  tail: `<div id="tail"><div class="a">پاکستان</div><div class="b">میری جان</div></div>`,
+};
+document.getElementById('c').innerHTML = T[location.hash.slice(1)];
+</script></body></html>

@@ -11,6 +11,7 @@ from pathlib import Path
 ap = argparse.ArgumentParser()
 ap.add_argument("--own"); ap.add_argument("--trucks", nargs=3); ap.add_argument("--text")
 ap.add_argument("--work"); ap.add_argument("--out"); ap.add_argument("--music")
+ap.add_argument("--desk-front"); ap.add_argument("--desk-rear")
 a = ap.parse_args()
 W = Path(a.work); W.mkdir(parents=True, exist_ok=True)
 TA, TB, TC = a.trucks
@@ -26,6 +27,11 @@ GRADE = {
     "today":  "eq=saturation=0.55:contrast=1.02:gamma=0.97,"
               "colorbalance=rs=-.04:bs=.07:rm=-.02:bm=.05,"
               "noise=alls=8:allf=t,vignette=PI/4.5",
+    "night":  "eq=saturation=0.92:contrast=1.03,"
+              "colorbalance=rs=.04:bs=-.03,"
+              "split[a][b];[b]gblur=sigma=14[g];[a][g]blend=all_mode=screen:all_opacity=0.16,"
+              "noise=alls=10:allf=t,vignette=PI/4",
+    "card":   "noise=alls=5:allf=t",
     "home":   "eq=saturation=1.05:contrast=1.02,"
               "colorbalance=rs=.05:bs=-.05:rm=.04:bm=-.04,"
               "split[a][b];[b]gblur=sigma=12[g];[a][g]blend=all_mode=screen:all_opacity=0.18,"
@@ -42,13 +48,13 @@ SHOTS = [
     (TC, 1.5, 4.0, "memory", "t3", 0.015, (0.21, 0.10, 0.79)),
     (TB, 12.0, 3.0, "memory", None, 0.02, (0.17, 0.02, 0.66)),
     (TA, 14.0, 3.0, "memory", None, 0.02, (0.30, 0.02, 0.66)),
-    (a.own, 26.3, 3.4, "today", "t4", 0.0),
-    (a.own, 37.0, 3.4, "today", "t5", 0.01),
-    (a.own, 0.0, 4.2, "home", None, 0.0),
-    (a.own, 10.4, 2.8, "home", None, 0.03),
-    (a.own, 43.0, 1.8, "home", None, 0.0),
-    (a.own, 45.5, 3.4, "home", None, 0.0),
-    (None, 0, 5.5, "home", "t6", 0),
+    # today: a student's desk far from home (stills brought to life), with the best moment of the real truck
+    (("still", a.desk_front, "190,450,700", "602,465,770", "188,330"), 0, 6.0, "night", "t4", 0),
+    (a.own, 0.3, 4.0, "home", None, 0.0),
+    (("still", a.desk_rear, "780,640,470", "560,480,600", "190,345"), 0, 6.5, "night", "t5", 0),
+    (("still", a.desk_front, "560,450,780", "560,450,700", "188,330", "9"), 0, 5.0, "night", "t6", 0),
+    # the pitch: Zedem Bazaar card, the tailgate city cycling Lahore -> Karachi -> Peshawar
+    (("cards", "cta_lahore", "cta_karachi", "cta_peshawar"), 0, 7.5, "card", None, 0),
 ]
 
 
@@ -58,13 +64,33 @@ def run(cmd):
 
 segs = []
 credit_span = []
+starts = []
 t_acc = 0.0
 for i, (src, ss, dur, grade, cap, push, *crop) in enumerate(SHOTS):
+    starts.append(t_acc - (XF if i else 0))
     if src in (TA, TB, TC):
         credit_span.append((t_acc - (XF if i else 0), t_acc - (XF if i else 0) + dur))
     t_acc += dur - (XF if i else 0)
     out = W / f"s{i:02d}.mp4"
-    if src is None:
+    if isinstance(src, tuple) and src[0] == "cards":  # cross-dissolving card variants
+        k = len(src) - 1; each = (dur + 0.5 * (k - 1)) / k
+        ins = sum([["-loop", "1", "-t", f"{each:.3f}", "-framerate", str(FPS), "-i", f"{a.text}/{c}.png"] for c in src[1:]], [])
+        xf, prev = [], "[0:v]"
+        for j in range(1, k):
+            xf.append(f"{prev}[{j}:v]xfade=transition=fade:duration=0.5:offset={j * (each - 0.5):.3f}[c{j}]"); prev = f"[c{j}]"
+        clip = W / f"cards{i:02d}.mp4"
+        run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(xf) + f";{prev}format=yuv420p[o]",
+             "-map", "[o]", "-r", str(FPS), "-c:v", "libx264", "-crf", "14", "-preset", "fast", str(clip)])
+        inp = ["-i", str(clip)]
+        base = "zoompan=z='1+0.0004*on':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=1080x1920:fps=24"
+    elif isinstance(src, tuple):  # an animated still
+        _, img, p0, p1, candle, *bl = src
+        clip = W / f"still{i:02d}.mp4"
+        run(["python3", str(Path(__file__).with_name("animate_still.py")), img, str(clip), str(dur), p0, p1, candle,
+             *(bl or [])])
+        inp = ["-i", str(clip)]
+        base = "null"
+    elif src is None:
         inp = ["-f", "lavfi", "-t", str(dur), "-i", f"color=c=0x120f0c:s=1080x1920:r={FPS}"]
         base = "null"
     else:
@@ -99,12 +125,17 @@ total = t
 c0, c1 = credit_span[0][0], credit_span[-1][1]
 inputs += ["-loop", "1", "-t", f"{total:.3f}", "-i", f"{a.text}/credit.png"]
 ci = len(segs)
+b0, b1 = starts[6], starts[-2]          # logo badge: from the desk scenes until the end card
+inputs += ["-loop", "1", "-t", f"{total:.3f}", "-i", f"{a.text}/bug.png"]
 fc.append(f"[{ci}:v]format=rgba,fade=t=in:st={c0 + 0.6:.3f}:d=0.6:alpha=1,fade=t=out:st={c1 - 0.9:.3f}:d=0.6:alpha=1[cr]")
-fc.append(f"{prev}[cr]overlay=0:0:shortest=1,fade=t=in:st=0:d=1.0,fade=t=out:st={total - 1.2:.3f}:d=1.2,format=yuv420p[v]")
+fc.append(f"[{ci + 1}:v]format=rgba,fade=t=in:st={b0 + 0.4:.3f}:d=0.8:alpha=1,fade=t=out:st={b1:.3f}:d=0.6:alpha=1[bg]")
+fc.append(f"{prev}[cr]overlay=0:0:shortest=1[pc]")
+prev = "[pc][bg]overlay=0:0:shortest=1"
+fc.append(f"{prev},fade=t=in:st=0:d=1.0,fade=t=out:st={total - 1.2:.3f}:d=1.2,format=yuv420p[v]")
 cmd = ["ffmpeg", "-v", "error", "-y", *inputs]
 if a.music:
     cmd += ["-i", a.music]
-    mi = len(segs) + 1
+    mi = len(segs) + 2
     fc.append(f"[{mi}:a]atrim=0:{total:.3f},asetpts=PTS-STARTPTS,afade=t=in:d=1.5,"
               f"afade=t=out:st={total - 3:.3f}:d=3,loudnorm=I=-16:TP=-1.5[a]")
     maps = ["-map", "[v]", "-map", "[a]", "-c:a", "aac", "-b:a", "192k"]
