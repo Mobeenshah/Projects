@@ -49,7 +49,7 @@ SHOTS = [
     (TB, 12.0, 3.0, "memory", None, 0.02, (0.17, 0.02, 0.66)),
     (TA, 14.0, 3.0, "memory", None, 0.02, (0.30, 0.02, 0.66)),
     # today: a student's desk far from home (stills brought to life), with the best moment of the real truck
-    (("still", a.desk_front, "252,448,896", "600,448,860", "188,330"), 0, 6.0, "night", "t4", 0),
+    (("still", a.desk_front, "252,448,896", "606,448,896", "188,330"), 0, 6.0, "night", "t4", 0),
     (a.own, 0.0, 2.8, "home", None, 0.0),
     (("still", a.desk_rear, "790,448,896", "592,448,860", "190,345"), 0, 6.5, "night", "t5", 0),
     (("still", a.desk_front, "600,448,896", "600,448,860", "188,330", "9"), 0, 5.0, "night", "t6", 0),
