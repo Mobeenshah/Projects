@@ -69,7 +69,8 @@ note_rgba = note.copy()
 im2 = warp_onto(im, note_rgba, NOTE_QUAD, blur=0.55, strength=0.92)
 pen_mask = np.zeros(im.shape[:2], np.uint8); cv2.fillPoly(pen_mask, [np.int32(PEN)], 255)
 im = np.where(pen_mask[..., None] > 0, im, im2)          # the pen lies on top of the writing
-TAILBOX = [(424, 425), (522, 415), (522, 485), (424, 497)]
+TAILBOX = [(431, 424), (508, 428), (508, 484), (431, 481)]   # inside the dotted border
 im = erase(im, TAILBOX, kind="yellow")
-im = warp_onto(im, tail, [(432, 428), (514, 420), (514, 482), (432, 492)], blur=0.5, mode="paint")
+im = erase(im, [(462, 481), (506, 483), (506, 489), (462, 488)], kind="yellow")   # tail of the old lettering
+im = warp_onto(im, tail, [(437, 430), (503, 433), (503, 477), (437, 475)], blur=0.5, mode="paint")
 cv2.imwrite(f"{outdir}/desk_rear.png", im)

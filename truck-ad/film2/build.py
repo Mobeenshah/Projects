@@ -45,14 +45,14 @@ SHOTS = [
     (None, 0, 3.6, "memory", "t1", 0),
     (TB, 0.0, 4.5, "memory", "t2", 0.02, (0.36, 0.18, 0.64)),
     (TA, 8.0, 4.0, "memory", None, 0.015, (0.02, 0.03, 0.64)),
-    (TC, 1.5, 4.0, "memory", "t3", 0.015, (0.21, 0.10, 0.79)),
+    (TC, 1.5, 3.5, "memory", "t3", 0.015, (0.21, 0.06, 0.74)),
     (TB, 12.0, 3.0, "memory", None, 0.02, (0.17, 0.02, 0.66)),
     (TA, 14.0, 3.0, "memory", None, 0.02, (0.30, 0.02, 0.66)),
     # today: a student's desk far from home (stills brought to life), with the best moment of the real truck
-    (("still", a.desk_front, "190,450,700", "602,465,770", "188,330"), 0, 6.0, "night", "t4", 0),
-    (a.own, 0.3, 4.0, "home", None, 0.0),
-    (("still", a.desk_rear, "780,640,470", "560,480,600", "190,345"), 0, 6.5, "night", "t5", 0),
-    (("still", a.desk_front, "560,450,780", "560,450,700", "188,330", "9"), 0, 5.0, "night", "t6", 0),
+    (("still", a.desk_front, "252,448,896", "600,448,860", "188,330"), 0, 6.0, "night", "t4", 0),
+    (a.own, 0.0, 2.8, "home", None, 0.0),
+    (("still", a.desk_rear, "790,448,896", "592,448,860", "190,345"), 0, 6.5, "night", "t5", 0),
+    (("still", a.desk_front, "600,448,896", "600,448,860", "188,330", "9"), 0, 5.0, "night", "t6", 0),
     # the pitch: Zedem Bazaar card, the tailgate city cycling Lahore -> Karachi -> Peshawar
     (("cards", "cta_lahore", "cta_karachi", "cta_peshawar"), 0, 7.5, "card", None, 0),
 ]
