@@ -32,14 +32,16 @@ GRADE = {
               "noise=alls=9:allf=t,vignette=PI/4.2",
 }
 
-# (source, start, dur, grade, caption, push-in per second)
+# (source, start, dur, grade, caption, push-in per second[, crop (x0, y0, size) as fractions])
+# truck clips are cropped (and trimmed before the watermark jumps corners) to leave out the TikTok
+# watermark; the creator is credited on screen instead.
 SHOTS = [
     (None, 0, 3.6, "memory", "t1", 0),
-    (TB, 0.0, 6.0, "memory", "t2", 0.025),
-    (TA, 8.0, 4.0, "memory", None, 0.02),
-    (TC, 1.5, 6.0, "memory", "t3", 0.015),
-    (TB, 12.0, 3.0, "memory", None, 0.02),
-    (TA, 14.0, 3.0, "memory", None, 0.02),
+    (TB, 0.0, 4.5, "memory", "t2", 0.02, (0.36, 0.18, 0.64)),
+    (TA, 8.0, 4.0, "memory", None, 0.015, (0.02, 0.03, 0.64)),
+    (TC, 1.5, 4.0, "memory", "t3", 0.015, (0.21, 0.10, 0.79)),
+    (TB, 12.0, 3.0, "memory", None, 0.02, (0.17, 0.02, 0.66)),
+    (TA, 14.0, 3.0, "memory", None, 0.02, (0.30, 0.02, 0.66)),
     (a.own, 26.3, 3.4, "today", "t4", 0.0),
     (a.own, 37.0, 3.4, "today", "t5", 0.01),
     (a.own, 0.0, 4.2, "home", None, 0.0),
@@ -55,7 +57,12 @@ def run(cmd):
 
 
 segs = []
-for i, (src, ss, dur, grade, cap, push) in enumerate(SHOTS):
+credit_span = []
+t_acc = 0.0
+for i, (src, ss, dur, grade, cap, push, *crop) in enumerate(SHOTS):
+    if src in (TA, TB, TC):
+        credit_span.append((t_acc - (XF if i else 0), t_acc - (XF if i else 0) + dur))
+    t_acc += dur - (XF if i else 0)
     out = W / f"s{i:02d}.mp4"
     if src is None:
         inp = ["-f", "lavfi", "-t", str(dur), "-i", f"color=c=0x120f0c:s=1080x1920:r={FPS}"]
@@ -63,7 +70,8 @@ for i, (src, ss, dur, grade, cap, push) in enumerate(SHOTS):
     else:
         inp = ["-ss", str(ss), "-t", str(dur), "-i", src]
         z = f"1+{push / FPS:.5f}*on"
-        base = (f"fps={FPS},scale=2160:3840:force_original_aspect_ratio=increase,crop=2160:3840,"
+        cr = f"crop=iw*{crop[0][2]}:ih*{crop[0][2]}:iw*{crop[0][0]}:ih*{crop[0][1]}," if crop else ""
+        base = (f"fps={FPS},{cr}scale=2160:3840:force_original_aspect_ratio=increase,crop=2160:3840,"
                 f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=1080x1920:fps={FPS}")
     fc = f"[0:v]{base},{GRADE[grade]},format=yuv420p[v0]"
     extra = []
@@ -88,11 +96,15 @@ for i in range(1, len(segs)):
     fc.append(f"{prev}[{i}:v]xfade=transition=fade:duration={XF}:offset={off:.3f}[x{i}]")
     prev, t = f"[x{i}]", off + segs[i][1]
 total = t
-fc.append(f"{prev}fade=t=in:st=0:d=1.0,fade=t=out:st={total - 1.2:.3f}:d=1.2,format=yuv420p[v]")
+c0, c1 = credit_span[0][0], credit_span[-1][1]
+inputs += ["-loop", "1", "-t", f"{total:.3f}", "-i", f"{a.text}/credit.png"]
+ci = len(segs)
+fc.append(f"[{ci}:v]format=rgba,fade=t=in:st={c0 + 0.6:.3f}:d=0.6:alpha=1,fade=t=out:st={c1 - 0.9:.3f}:d=0.6:alpha=1[cr]")
+fc.append(f"{prev}[cr]overlay=0:0:shortest=1,fade=t=in:st=0:d=1.0,fade=t=out:st={total - 1.2:.3f}:d=1.2,format=yuv420p[v]")
 cmd = ["ffmpeg", "-v", "error", "-y", *inputs]
 if a.music:
     cmd += ["-i", a.music]
-    mi = len(segs)
+    mi = len(segs) + 1
     fc.append(f"[{mi}:a]atrim=0:{total:.3f},asetpts=PTS-STARTPTS,afade=t=in:d=1.5,"
               f"afade=t=out:st={total - 3:.3f}:d=3,loudnorm=I=-16:TP=-1.5[a]")
     maps = ["-map", "[v]", "-map", "[a]", "-c:a", "aac", "-b:a", "192k"]
