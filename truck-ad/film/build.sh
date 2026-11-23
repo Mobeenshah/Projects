@@ -14,8 +14,8 @@ colorbalance=rs=.07:gs=.02:bs=-.09:rm=.05:bm=-.06:rh=.04:bh=-.08,\
 curves=r='0/0.07 0.5/0.55 1/0.95':g='0/0.06 0.5/0.51 1/0.93':b='0/0.09 0.5/0.45 1/0.84',\
 noise=alls=13:allf=t,vignette=PI/4.6,format=yuv420p"
 
-clip() { # name start dur
-  ffmpeg -v error -y -ss "$2" -t "$3" -i "$SRC" -an -vf "fps=$FPS,$LOOK" -c:v libx264 -crf 16 -preset fast "$WK/$1.mp4"
+clip() { # name start dur [extra-filter]
+  ffmpeg -v error -y -ss "$2" -t "$3" -i "$SRC" -an -vf "fps=$FPS,${4:-null},$LOOK" -c:v libx264 -crf 16 -preset fast "$WK/$1.mp4"
 }
 still() { # name image dur extra-filter
   ffmpeg -v error -y -loop 1 -t "$3" -framerate $FPS -i "$2" -vf "scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:color=0x262320,${4:-null},$LOOK" \
@@ -27,8 +27,9 @@ clip  s2_orbit 0.0 5.0
 clip  s3_side 19.5 4.0
 clip  s4_face 43.0 1.8
 still s5_msg  "$MSG" 2.5
-clip  s6_rear 11.0 5.0
-clip  s7_shelf 45.5 2.5
+# whole tailgate in frame (the phone's own close-up crops the lettering), slow push-in
+clip  s6_rear 10.4 2.6 "scale=2160:3840,zoompan=z='1+0.006*on':x='iw/2-(iw/zoom/2)':y='ih*0.46-(ih/zoom/2)':d=1:s=1080x1920:fps=$FPS"
+clip  s7_shelf 45.5 3.0
 # end card: the aged poster, slow push-in
 ffmpeg -v error -y -loop 1 -framerate $FPS -t 5 -i "$POSTER" -vf "scale=2160:-2,pad=2160:3840:(ow-iw)/2:(oh-ih)/2:color=0x262320,\
 zoompan=z='1+0.0016*on':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=1080x1920:fps=$FPS,$LOOK" -c:v libx264 -crf 16 -preset fast "$WK/s8_poster.mp4"
