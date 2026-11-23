@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shaheen Truck Ad 1972</title>
+<style>
+@font-face{font-family:Nastaliq;src:url(fonts/nastaliq-700.woff2);font-weight:700}
+@font-face{font-family:Nastaliq;src:url(fonts/nastaliq-400.woff2);font-weight:400}
+@font-face{font-family:Abril;src:url(fonts/abril.woff2)}
+@font-face{font-family:Alfa;src:url(fonts/alfa.woff2)}
+@font-face{font-family:Oswald;src:url(fonts/oswald-500.woff2);font-weight:500}
+@font-face{font-family:Oswald;src:url(fonts/oswald-700.woff2);font-weight:700}
+@font-face{font-family:Playfair;src:url(fonts/playfair-italic.woff2);font-style:italic}
+@font-face{font-family:Playfair;src:url(fonts/playfair-700.woff2);font-weight:700}
+@font-face{font-family:Lobster;src:url(fonts/lobster.woff2)}
+:root{
+  --paper:#ffffff;            /* paper is added later by age.py (multiply) */
+  --green:#17603a; --red:#c3312a; --yellow:#e9b821; --ink:#1d1a17; --blue:#203f86;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1800px;height:2400px;background:var(--paper);overflow:hidden}
+.page{position:absolute;inset:0}
+/* truck-art border: red band studded with yellow dots */
+.border{position:absolute;inset:46px;border:44px solid var(--red);}
+.border::before{content:"";position:absolute;inset:-44px;
+  background:radial-gradient(circle,var(--yellow) 0 7px,transparent 8px) 0 0/44px 44px;
+  -webkit-mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);padding:44px}
+.inner{position:absolute;inset:104px;border:5px solid var(--green);}
+.inner::after{content:"";position:absolute;inset:9px;border:2px solid var(--green)}
+.corner{position:absolute;width:118px;height:118px}
+.corner.tl{left:70px;top:70px}.corner.tr{right:70px;top:70px}
+.corner.bl{left:70px;bottom:70px}.corner.br{right:70px;bottom:70px}
+
+.urdu{font-family:Nastaliq;direction:rtl}
+.top{position:absolute;top:100px;left:0;right:0;text-align:center}
+.top .urdu{font-size:118px;font-weight:700;color:var(--red);line-height:1.75;
+  text-shadow:4px 4px 0 var(--yellow)}
+.top .roman{font:500 30px Oswald;letter-spacing:.55em;color:var(--green);margin-top:4px;padding-left:.55em}
+.rule{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:14px}
+.rule span{display:block;width:440px;height:3px;background:var(--ink)}
+.rule b{width:14px;height:14px;background:var(--red);transform:rotate(45deg)}
+
+.headline{position:absolute;top:470px;left:0;right:0;text-align:center;color:var(--ink)}
+.headline .small{font:italic 54px Playfair;color:var(--red)}
+.headline .big{font:124px/1 Abril;white-space:nowrap;letter-spacing:.01em;color:var(--green);margin-top:6px}
+
+.stage{position:absolute;left:150px;right:150px;top:650px;height:1120px;overflow:hidden}
+.stage svg{position:absolute;inset:0}
+.truck{position:absolute;left:175px;top:40px;width:1220px;transform:rotate(11deg);transform-origin:50% 70%}
+.shadow{position:absolute;left:220px;top:975px;width:1130px;height:120px;transform:rotate(-2deg);border-radius:50%;
+  background:radial-gradient(closest-side,rgba(29,26,23,.55),rgba(29,26,23,0))}
+
+.seal{position:absolute;left:190px;top:700px;width:290px;height:290px;transform:rotate(-12deg)}
+
+.ribbon{position:absolute;top:1745px;left:120px;right:120px;height:120px;background:var(--red);
+  display:flex;align-items:center;justify-content:center;gap:40px;color:#fff;
+  box-shadow:inset 0 0 0 6px var(--red),inset 0 0 0 9px var(--yellow)}
+.ribbon::before,.ribbon::after{content:"";position:absolute;top:22px;width:80px;height:120px;background:#94211c;z-index:-1}
+.ribbon::before{left:-56px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,30% 50%)}
+.ribbon::after{right:-56px;clip-path:polygon(0 0,100% 0,70% 50%,100% 100%,0 100%)}
+.ribbon .urdu{font-size:60px;line-height:1;margin-top:-8px;color:var(--yellow)}
+.ribbon .en{font:52px Lobster;color:#fff}
+.ribbon i{width:16px;height:16px;background:var(--yellow);transform:rotate(45deg)}
+
+.copy{position:absolute;top:1912px;left:170px;right:170px;display:grid;
+  grid-template-columns:1.15fr 1fr 1fr;gap:46px;color:var(--ink)}
+.copy p{font:italic 29px/1.38 Playfair}
+.copy ul{list-style:none;font:500 25px/1.3 Oswald;text-transform:uppercase;letter-spacing:.04em}
+.copy li{padding-left:34px;position:relative;margin-bottom:10px}
+.copy li::before{content:"✿";position:absolute;left:0;color:var(--red)}
+.copy .book{font:700 36px/1.05 Oswald;text-transform:uppercase;color:var(--red)}
+.copy .rate{font:700 25px/1.4 Playfair;margin-top:8px}
+.copy .tel{font:500 21px/1.4 Oswald;letter-spacing:.08em;margin-top:6px}
+.copy > div + div{border-left:3px solid var(--ink);padding-left:40px}
+
+.brand{position:absolute;left:115px;right:115px;bottom:115px;height:0}
+.fine{position:absolute;bottom:122px;left:0;right:0;display:flex;justify-content:space-between;
+  padding:0 235px;font:500 15px Oswald;letter-spacing:.22em;color:var(--ink);text-transform:uppercase;opacity:.8}
+.logo{position:absolute;top:470px;left:0;right:0;text-align:center}
+.logo .name{display:inline-block;font:72px/1 Alfa;color:var(--yellow);background:var(--green);
+  padding:16px 44px 12px;letter-spacing:.06em;box-shadow:0 0 0 5px var(--paper),0 0 0 9px var(--green)}
+.logo .sub{font:700 25px Oswald;letter-spacing:.32em;color:var(--green);margin-top:22px;padding-left:.32em}
+.logo .urdu{font-size:40px;color:var(--red);line-height:1.2;margin-top:-6px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="border"></div>
+  <div class="inner"></div>
+
+  <!-- corner medallions (truck-art flower) -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <g id="flower">
+        <circle cx="59" cy="59" r="56" fill="#17603a"/>
+        <circle cx="59" cy="59" r="47" fill="none" stroke="#e9b821" stroke-width="4" stroke-dasharray="2 9" stroke-linecap="round"/>
+        <g fill="#c3312a">
+          <ellipse cx="59" cy="32" rx="10" ry="19"/><ellipse cx="59" cy="32" rx="10" ry="19" transform="rotate(45 59 59)"/>
+          <ellipse cx="59" cy="32" rx="10" ry="19" transform="rotate(90 59 59)"/><ellipse cx="59" cy="32" rx="10" ry="19" transform="rotate(135 59 59)"/>
+          <ellipse cx="59" cy="32" rx="10" ry="19" transform="rotate(180 59 59)"/><ellipse cx="59" cy="32" rx="10" ry="19" transform="rotate(225 59 59)"/>
+          <ellipse cx="59" cy="32" rx="10" ry="19" transform="rotate(270 59 59)"/><ellipse cx="59" cy="32" rx="10" ry="19" transform="rotate(315 59 59)"/>
+        </g>
+        <circle cx="59" cy="59" r="11" fill="#e9b821"/>
+      </g>
+    </defs>
+  </svg>
+  <svg class="corner tl" viewBox="0 0 118 118"><use href="#flower"/></svg>
+  <svg class="corner tr" viewBox="0 0 118 118"><use href="#flower"/></svg>
+  <svg class="corner bl" viewBox="0 0 118 118"><use href="#flower"/></svg>
+  <svg class="corner br" viewBox="0 0 118 118"><use href="#flower"/></svg>
+
+  <div class="top">
+    <div class="urdu">پاکستان میری جان</div>
+    <div class="roman">PAKISTAN · MERI · JAAN</div>
+    <div class="rule"><span></span><b></b><span></span></div>
+  </div>
+
+  <div class="headline">
+    <div class="small">Presenting the pride of the highway —</div>
+    <div class="big">THE GRAND TRUNK KING</div>
+  </div>
+
+  <div class="stage">
+    <svg viewBox="0 0 1500 1120" preserveAspectRatio="none">
+      <defs>
+        <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+          <rect width="3.2" height="9" fill="#17603a" opacity=".5"/>
+        </pattern>
+        <radialGradient id="fade" cx="50%" cy="55%" r="60%">
+          <stop offset="0" stop-color="#fff" stop-opacity="1"/><stop offset=".75" stop-color="#fff" stop-opacity="1"/>
+          <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+        <mask id="m"><rect width="1500" height="1120" fill="url(#fade)"/></mask>
+      </defs>
+      <g mask="url(#m)">
+        <g id="rays" fill="#e9b821" opacity=".42"></g>
+        <!-- Karakoram silhouette, line-engraved -->
+        <path d="M0 790 L120 640 L190 700 L300 520 L360 590 L470 430 L560 560 L640 500 L760 330 L860 500 L930 450 L1030 560 L1120 470 L1230 600 L1330 520 L1500 700 L1500 1120 L0 1120Z"
+              fill="url(#hatch)"/>
+        <path d="M760 330 L720 390 L745 385 L770 410 L795 380 L815 400 L760 330Z M470 430 L445 470 L470 462 L490 478Z" fill="#fff"/>
+        <path d="M0 790 L120 640 L190 700 L300 520 L360 590 L470 430 L560 560 L640 500 L760 330 L860 500 L930 450 L1030 560 L1120 470 L1230 600 L1330 520 L1500 700"
+              fill="none" stroke="#17603a" stroke-width="4"/>
+        <path d="M0 900 Q750 845 1500 900 L1500 1120 L0 1120Z" fill="#d9c38a" opacity=".6"/>
+        <path d="M0 900 Q750 845 1500 900" fill="none" stroke="#1d1a17" stroke-width="3"/>
+      </g>
+    </svg>
+    <div class="shadow"></div>
+    <img class="truck" src="assets/truck_halftone.png" alt="">
+  </div>
+
+  <svg class="seal" viewBox="0 0 290 290">
+    <defs><path id="arc" d="M145 145 m-104 0 a104 104 0 1 1 208 0 a104 104 0 1 1 -208 0"/></defs>
+    <circle cx="145" cy="145" r="140" fill="#c3312a"/>
+    <circle cx="145" cy="145" r="128" fill="none" stroke="#e9b821" stroke-width="4" stroke-dasharray="3 10" stroke-linecap="round"/>
+    <circle cx="145" cy="145" r="82" fill="#e9b821"/>
+    <text font-family="Oswald" font-weight="700" font-size="25" letter-spacing="4.5" fill="#fff">
+      <textPath href="#arc">HAND-PAINTED ✦ MADE IN PAKISTAN ✦ SINCE 1958 ✦</textPath>
+    </text>
+    <text x="145" y="138" text-anchor="middle" font-family="Alfa" font-size="44" fill="#c3312a">100%</text>
+    <text x="145" y="176" text-anchor="middle" font-family="Oswald" font-weight="700" font-size="25" letter-spacing="2" fill="#17603a">ORIGINAL</text>
+  </svg>
+
+  <div class="ribbon">
+    <span class="urdu">دیکھ مگر پیار سے</span><i></i><span class="en">Look — but with love!</span>
+  </div>
+
+  <div class="copy">
+    <div><p>From the docks of Karachi to the snows of the Khyber, our lorries carry the nation’s grain, cotton and dreams — dressed in colours fit for a wedding.</p></div>
+    <div><ul>
+      <li>Hand-painted by the master craftsmen of Rawalpindi</li>
+      <li>Brass bells &amp; chamak-patti that sing every mile</li>
+      <li>Built for dust, monsoon &amp; 1,000-mile hauls</li>
+    </ul></div>
+    <div>
+      <div class="book">Book your consignment today!</div>
+      <div class="rate">Rates from Rs. 2/- per maund</div>
+      <div class="tel">Telegrams: SHAHEENTRANS<br>Phone: 7 2 4 6 1</div>
+    </div>
+  </div>
+
+  <div class="logo" style="top:auto;bottom:-10px;display:none"></div>
+  <div class="fine"><span>Advt. No. SGT/72/14</span><span>Karachi · Lahore · Rawalpindi · Peshawar · Quetta</span><span>Printed in Pakistan</span></div>
+</div>
+
+<!-- brand block, sits between copy and border -->
+<div style="position:absolute;left:0;right:0;top:2168px;text-align:center">
+  <span style="display:inline-flex;align-items:center;gap:26px">
+    <span style="font:62px/1 Alfa;color:#e9b821;background:#17603a;padding:12px 34px 8px;letter-spacing:.05em;box-shadow:0 0 0 4px #fff,0 0 0 8px #17603a">SHAHEEN</span>
+    <span style="text-align:left">
+      <span style="display:block;font:700 30px/1.1 Oswald;letter-spacing:.2em;color:#17603a">GOODS TRANSPORT CO.</span>
+      <span style="display:block;font:500 19px/1.4 Oswald;letter-spacing:.3em;color:#1d1a17">(REGD.) · HEAD OFFICE · KARACHI</span>
+    </span>
+    <span class="urdu" style="font-size:44px;line-height:1;color:#c3312a">شاہین ٹرانسپورٹ</span>
+  </span>
+</div>
+
+<script>
+  // sunburst behind the truck
+  const g = document.getElementById('rays'), cx = 750, cy = 560, n = 40, R = 1600;
+  for (let i = 0; i < n; i += 2) {
+    const a1 = (i / n) * 2 * Math.PI, a2 = ((i + 1) / n) * 2 * Math.PI;
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', `M${cx} ${cy}L${cx + R * Math.cos(a1)} ${cy + R * Math.sin(a1)}L${cx + R * Math.cos(a2)} ${cy + R * Math.sin(a2)}Z`);
+    g.appendChild(p);
+  }
+</script>
+</body>
+</html>
