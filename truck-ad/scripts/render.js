@@ -8,6 +8,6 @@ const path = require('path');
   await p.goto(page.includes('://') ? page : 'file://' + path.resolve(page.split('#')[0]) + (page.includes('#') ? '#' + page.split('#')[1] : ''));
   await p.evaluate(() => document.fonts.ready);
   await p.waitForTimeout(300);
-  await p.screenshot({ path: out });
+  await p.screenshot({ path: out, omitBackground: true });
   await b.close();
 })();

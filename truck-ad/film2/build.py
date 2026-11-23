@@ -1,0 +1,104 @@
+"""Diaspora-nostalgia cut: real Pakistani trucks (memory) -> the 3D-printed truck far from home.
+
+usage: python3 build.py --own OWN.mp4 --trucks A.mp4 B.mp4 C.mp4 --text DIR --work DIR --out OUT.mp4 [--music TRACK]
+  A = orange truck by the highway (2a3e...), B = truck approaching through trees (0316...),
+  C = truck loaded with sacks (6f1c...). DIR holds caption PNGs t1..t6 from text.html.
+"""
+import argparse
+import subprocess
+from pathlib import Path
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--own"); ap.add_argument("--trucks", nargs=3); ap.add_argument("--text")
+ap.add_argument("--work"); ap.add_argument("--out"); ap.add_argument("--music")
+a = ap.parse_args()
+W = Path(a.work); W.mkdir(parents=True, exist_ok=True)
+TA, TB, TC = a.trucks
+FPS, XF = 24, 0.6  # frame rate, crossfade length
+
+# memory = warm, soft, blooming super-8; today = cool, quiet; home = the toy glowing in home's colours
+GRADE = {
+    "memory": "eq=saturation=0.92:contrast=0.94:gamma=1.06,"
+              "colorbalance=rs=.10:gs=.03:bs=-.12:rm=.07:bm=-.08:rh=.06:bh=-.07,"
+              "curves=all='0/0.07 0.5/0.52 1/0.96',"
+              "split[a][b];[b]gblur=sigma=14[g];[a][g]blend=all_mode=screen:all_opacity=0.28,"
+              "noise=alls=16:allf=t,vignette=PI/3.8",
+    "today":  "eq=saturation=0.55:contrast=1.02:gamma=0.97,"
+              "colorbalance=rs=-.04:bs=.07:rm=-.02:bm=.05,"
+              "noise=alls=8:allf=t,vignette=PI/4.5",
+    "home":   "eq=saturation=1.05:contrast=1.02,"
+              "colorbalance=rs=.05:bs=-.05:rm=.04:bm=-.04,"
+              "split[a][b];[b]gblur=sigma=12[g];[a][g]blend=all_mode=screen:all_opacity=0.18,"
+              "noise=alls=9:allf=t,vignette=PI/4.2",
+}
+
+# (source, start, dur, grade, caption, push-in per second)
+SHOTS = [
+    (None, 0, 3.6, "memory", "t1", 0),
+    (TB, 0.0, 6.0, "memory", "t2", 0.025),
+    (TA, 8.0, 4.0, "memory", None, 0.02),
+    (TC, 1.5, 6.0, "memory", "t3", 0.015),
+    (TB, 12.0, 3.0, "memory", None, 0.02),
+    (TA, 14.0, 3.0, "memory", None, 0.02),
+    (a.own, 26.3, 3.4, "today", "t4", 0.0),
+    (a.own, 37.0, 3.4, "today", "t5", 0.01),
+    (a.own, 0.0, 4.2, "home", None, 0.0),
+    (a.own, 10.4, 2.8, "home", None, 0.03),
+    (a.own, 43.0, 1.8, "home", None, 0.0),
+    (a.own, 45.5, 3.4, "home", None, 0.0),
+    (None, 0, 5.5, "home", "t6", 0),
+]
+
+
+def run(cmd):
+    subprocess.run(cmd, check=True)
+
+
+segs = []
+for i, (src, ss, dur, grade, cap, push) in enumerate(SHOTS):
+    out = W / f"s{i:02d}.mp4"
+    if src is None:
+        inp = ["-f", "lavfi", "-t", str(dur), "-i", f"color=c=0x120f0c:s=1080x1920:r={FPS}"]
+        base = "null"
+    else:
+        inp = ["-ss", str(ss), "-t", str(dur), "-i", src]
+        z = f"1+{push / FPS:.5f}*on"
+        base = (f"fps={FPS},scale=2160:3840:force_original_aspect_ratio=increase,crop=2160:3840,"
+                f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=1080x1920:fps={FPS}")
+    fc = f"[0:v]{base},{GRADE[grade]},format=yuv420p[v0]"
+    extra = []
+    if cap:
+        extra = ["-loop", "1", "-t", str(dur), "-i", f"{a.text}/{cap}.png"]
+        fi, fo = 0.5, max(0.6, dur - 0.9)
+        fc += (f";[1:v]format=rgba,fade=t=in:st={fi}:d=0.8:alpha=1,fade=t=out:st={fo}:d=0.6:alpha=1[t]"
+               f";[v0][t]overlay=0:0:shortest=1,format=yuv420p[v1]")
+        vout = "[v1]"
+    else:
+        vout = "[v0]"
+    run(["ffmpeg", "-v", "error", "-y", *inp, *extra, "-filter_complex", fc, "-map", vout,
+         "-t", str(dur), "-r", str(FPS), "-c:v", "libx264", "-crf", "15", "-preset", "fast", str(out)])
+    segs.append((out, dur))
+
+# crossfade chain
+inputs, fc, prev, t = [], [], "[0:v]", segs[0][1]
+for i, (p, d) in enumerate(segs):
+    inputs += ["-i", str(p)]
+for i in range(1, len(segs)):
+    off = t - XF
+    fc.append(f"{prev}[{i}:v]xfade=transition=fade:duration={XF}:offset={off:.3f}[x{i}]")
+    prev, t = f"[x{i}]", off + segs[i][1]
+total = t
+fc.append(f"{prev}fade=t=in:st=0:d=1.0,fade=t=out:st={total - 1.2:.3f}:d=1.2,format=yuv420p[v]")
+cmd = ["ffmpeg", "-v", "error", "-y", *inputs]
+if a.music:
+    cmd += ["-i", a.music]
+    mi = len(segs)
+    fc.append(f"[{mi}:a]atrim=0:{total:.3f},asetpts=PTS-STARTPTS,afade=t=in:d=1.5,"
+              f"afade=t=out:st={total - 3:.3f}:d=3,loudnorm=I=-16:TP=-1.5[a]")
+    maps = ["-map", "[v]", "-map", "[a]", "-c:a", "aac", "-b:a", "192k"]
+else:
+    maps = ["-map", "[v]"]
+cmd += ["-filter_complex", ";".join(fc), *maps, "-c:v", "libx264", "-crf", "21", "-preset", "medium",
+        "-movflags", "+faststart", a.out]
+run(cmd)
+print(f"built {a.out} ({total:.1f}s)")
