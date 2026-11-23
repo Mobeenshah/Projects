@@ -1,0 +1,124 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Customise Carousel</title>
+<style>
+@font-face{font-family:Nastaliq;src:url(../poster/fonts/nastaliq-700.woff2)}
+@font-face{font-family:Abril;src:url(../poster/fonts/abril.woff2)}
+@font-face{font-family:Oswald;src:url(../poster/fonts/oswald-700.woff2);font-weight:700}
+@font-face{font-family:Oswald;src:url(../poster/fonts/oswald-500.woff2);font-weight:500}
+@font-face{font-family:Playfair;src:url(../poster/fonts/playfair-italic.woff2);font-style:italic}
+:root{--red:#d83a20;--blue:#1f4fa0;--yellow:#ffb400;--green:#1d8a4a;--ink:#1b1a2a;--cream:#fdf0dc}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1350px;overflow:hidden;background:#fff;font-family:Oswald;color:var(--ink)}
+.s{position:absolute;inset:0;display:none}.s.on{display:block}
+.u{font-family:Nastaliq;direction:rtl}
+.logo{position:absolute;top:34px;left:48px;width:72px}
+.pg{position:absolute;top:66px;right:56px;font:500 22px Oswald;letter-spacing:.2em;color:#9a958c}
+.kick{position:absolute;top:64px;left:0;right:0;text-align:center;font:700 26px Oswald;letter-spacing:.4em;color:var(--green)}
+.h{position:absolute;top:168px;left:40px;right:40px;text-align:center;font:78px/1.02 Abril;color:var(--red)}
+.hu{position:absolute;top:258px;left:60px;right:60px;text-align:center;font-size:50px;line-height:1.7;color:var(--blue)}
+.truck{position:absolute;filter:drop-shadow(0 30px 24px rgba(40,25,10,.22))}
+.floor{position:absolute;height:60px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.20),transparent)}
+.call{position:absolute;width:300px;height:300px;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 8px var(--yellow),0 0 0 14px var(--red),0 14px 30px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.call img{width:250px}
+.call.wide img{width:270px}
+.lead{position:absolute;border-top:4px dashed var(--red);transform-origin:0 0}
+.lab{position:absolute;font:700 26px/1.25 Oswald;letter-spacing:.14em;color:var(--green);text-align:center}
+.chips{position:absolute;left:60px;right:60px;bottom:70px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.chip{font-family:Nastaliq;direction:rtl;font-size:38px;line-height:1.55;padding:0 22px 8px;border-radius:10px;background:#f4c430;color:#c8281e;border:4px solid #c8281e}
+.chips.n img{height:62px}
+.note{position:absolute;bottom:22px;left:0;right:0;text-align:center;font:500 18px Oswald;letter-spacing:.18em;color:#9a958c}
+/* photo slides */
+.photo{position:absolute;inset:0;width:1080px;height:1350px;object-fit:cover}
+.scrim{position:absolute;left:0;right:0;height:520px}
+.top{top:0;background:linear-gradient(rgba(10,6,3,.72),rgba(10,6,3,0))}
+.bot{bottom:0;background:linear-gradient(rgba(10,6,3,0),rgba(10,6,3,.8))}
+.pt{position:absolute;left:60px;right:60px;text-align:center;color:#fff8ea;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.pt .a{font-size:64px;line-height:1.75}
+.pt .b{font:italic 46px/1.25 Playfair}
+.badge{position:absolute;background:var(--cream);border-radius:14px;padding:10px 12px 6px;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+.badge img{width:86px;display:block}
+.cta{display:inline-block;margin-top:22px;background:var(--red);color:#fff;font:700 40px Oswald;letter-spacing:.12em;padding:16px 46px;border-radius:50px;box-shadow:0 7px 0 #9e2914;text-shadow:none}
+.cta small{display:block;font:500 20px Oswald;letter-spacing:.3em;color:var(--yellow)}
+.tagline{font:500 24px Oswald;letter-spacing:.24em;text-transform:uppercase;margin-top:14px;opacity:.9}
+.call.box{border-radius:22px}
+.grid{position:absolute;left:60px;top:1120px;width:470px;display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;justify-items:center}
+.grid .chip{width:100%;text-align:center}
+.names{position:absolute;left:60px;top:1112px;width:440px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.names img{width:400px}
+.dot{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--red);transform:scale(.6)}
+</style></head><body>
+
+<!-- 1: white, city on the front -->
+<section class="s" id="s1">
+  <img class="logo" src="../brand/zedem_logo_transparent.png" alt="">
+  <div class="pg">1 / 4</div>
+  <div class="kick">MAKE IT YOURS</div>
+  <div class="h">Your city, up front.</div>
+  <div class="hu u">آپ کا شہر، سامنے بمپر پر</div>
+  <div class="floor" style="left:170px;top:1060px;width:760px"></div>
+  <img class="truck" id="t1" data-fx="0.103" data-fy="0.843" src="assets/cut_front_lahore.png" style="left:150px;top:390px;width:790px" alt="">
+  <div class="call box" id="c1" style="left:580px;top:1120px;width:420px;height:150px"><img src="assets/plates/front_lahore.png" style="width:300px" alt=""></div>
+  <div class="lab" style="left:580px;top:1286px;width:420px">FRONT BUMPER · YOUR CITY</div>
+  <div class="grid">
+    <span class="chip">لاہور</span><span class="chip">کراچی</span><span class="chip">پشاور</span><span class="chip">کوئٹہ</span>
+  </div>
+</section>
+
+<!-- 2: white, a name on the back -->
+<section class="s" id="s2">
+  <img class="logo" src="../brand/zedem_logo_transparent.png" alt="">
+  <div class="pg">2 / 4</div>
+  <div class="kick">MAKE IT YOURS</div>
+  <div class="h">Their name, on the back.</div>
+  <div class="hu u">پیاروں کا نام، پچھلے بمپر پر</div>
+  <div class="floor" style="left:190px;top:1050px;width:720px"></div>
+  <img class="truck" id="t2" data-fx="0.163" data-fy="0.826" src="assets/cut_rear_zainab.png" style="left:180px;top:380px;width:740px" alt="">
+  <div class="call box" id="c2" style="left:540px;top:1120px;width:470px;height:130px"><img src="assets/plates/rear_zainab.png" style="width:420px" alt=""></div>
+  <div class="lab" style="left:540px;top:1270px;width:470px">BACK BUMPER · ANY NAME</div>
+  <div class="names">
+    <img src="assets/plates/rear_ammi.png" alt=""><img src="assets/plates/rear_abbu.png" alt=""><img src="assets/plates/rear_ali.png" alt="">
+  </div>
+</section>
+
+<!-- 3: on a shelf far from home -->
+<section class="s" id="s3">
+  <img class="photo" src="assets/shelf_karachi.png" alt="">
+  <div class="scrim top"></div>
+  <div class="pg" style="color:#e8dcc4">3 / 4</div>
+  <div class="badge" style="top:40px;left:46px"><img src="../brand/zedem_logo_card.png" alt=""></div>
+  <div class="pt" style="top:150px"><div class="a u">کراچی، دوحہ کی ایک شیلف پر</div><div class="b">Karachi, on a shelf in Doha.</div></div>
+  <div class="scrim bot" style="height:300px"></div>
+  <div class="pt" style="bottom:56px"><div class="tagline">Front bumper · کراچی</div></div>
+</section>
+
+<!-- 4: on the study table -->
+<section class="s" id="s4">
+  <img class="photo" src="assets/rear_abbu.png" style="object-position:57% 50%" alt="">
+  <div class="scrim top"></div>
+  <div class="pg" style="color:#e8dcc4">4 / 4</div>
+  <div class="badge" style="top:40px;left:46px"><img src="../brand/zedem_logo_card.png" alt=""></div>
+  <div class="pt" style="top:150px"><div class="a u">ابو کے لیے</div><div class="b">For Abbu, who waved at every truck.</div></div>
+  <div class="scrim bot"></div>
+  <div class="pt" style="bottom:70px">
+    <div class="tagline">Your city · their name · hand-finished truck art</div>
+    <div class="cta">ORDER YOURS<small>LINK IN BIO</small></div>
+  </div>
+</section>
+
+<script>
+document.getElementById(location.hash.slice(1) || 's1').classList.add('on');
+// dashed leader from the bumper on the truck to its callout
+function lead(tid, cid) {
+  const t = document.getElementById(tid), c = document.getElementById(cid);
+  const x1 = t.offsetLeft + t.offsetWidth * +t.dataset.fx, y1 = t.offsetTop + t.offsetHeight * (+t.dataset.fy + 0.045);  // just below the plate
+  const x2 = c.offsetLeft, y2 = c.offsetTop + c.offsetHeight / 2;
+  const d = document.createElement('div'); d.className = 'lead';
+  d.style.cssText = `left:${x1}px;top:${y1}px;width:${Math.hypot(x2 - x1, y2 - y1)}px;transform:rotate(${Math.atan2(y2 - y1, x2 - x1)}rad)`;
+  t.parentNode.insertBefore(d, c);
+  const dot = document.createElement('div'); dot.className = 'dot'; dot.style.cssText = `left:${x1 - 9}px;top:${y1 - 9}px`;
+  t.parentNode.appendChild(dot);
+}
+window.addEventListener('load', () => { lead('t1', 'c1'); lead('t2', 'c2'); });
+</script>
+</body></html>
